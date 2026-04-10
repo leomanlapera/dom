@@ -93,12 +93,42 @@ export function handleOverlayClick(event) {
   }
 }
 
+export function handleListClick(event) {
+  const item = event.target.closest("[data-index]")
+  if (!item) return
+
+  const index = Number(item.dataset.index)
+  state.activeIndex = index
+  selectCommand(index)
+}
+
 export function selectCommand(index) {
   const selected = state.filteredCommands[index]
   if (!selected) return
 
   console.log("Selected command:", selected)
   closePalette()
+}
+
+export function handleGlobalKeydown(event) {
+  const isK = event.key.toLowerCase() === "k"
+  const hasShortcut = (event.ctrlKey || event.metaKey) && isK
+
+  if (hasShortcut) {
+    event.preventDefault()
+
+    if (state.isOpen) {
+      closePalette()
+    } else {
+      openPalette(document.activeElement)
+    }
+    return
+  }
+
+  if (event.key === "Escape" && state.isOpen) {
+    event.preventDefault()
+    closePalette()
+  }
 }
 
 function renderList() {
